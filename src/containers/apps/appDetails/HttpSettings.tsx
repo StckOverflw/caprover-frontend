@@ -1,4 +1,5 @@
 import { InfoCircleOutlined } from '@ant-design/icons'
+import CodeEditor from '@uiw/react-textarea-code-editor'
 import type { SelectProps } from 'antd'
 import {
     Button,
@@ -12,6 +13,7 @@ import {
     Tooltip,
 } from 'antd'
 import { Component, Fragment } from 'react'
+import StorageHelper from '../../../utils/StorageHelper'
 import Toaster from '../../../utils/Toaster'
 import Utils from '../../../utils/Utils'
 import NewTabLink from '../../global/NewTabLink'
@@ -274,19 +276,33 @@ export default class HttpSettings extends Component<
                     <code>%&gt;</code> , unless you really know what you're
                     doing! To revert to default, simply remove all the content.
                 </p>
-                <Input.TextArea
-                    style={{
-                        fontFamily: 'monospace',
-                    }}
-                    onChange={(e) => {
-                        const newApiData = Utils.copyObject(this.props.apiData!)
-                        newApiData.appDefinition.customNginxConfig =
-                            e.target.value
-                        this.props.updateApiData(newApiData)
-                    }}
-                    rows={17}
-                    defaultValue={customNginxConfig}
-                />
+                <div style={{ height: '500px', overflow: 'auto' }}>
+                    <CodeEditor
+                        data-color-mode={
+                            StorageHelper.getDarkModeFromLocalStorage()
+                                ? 'dark'
+                                : 'light'
+                        }
+                        value={customNginxConfig}
+                        language="nginx"
+                        placeholder="Enter your custom NGINX configuration here. Leave empty to reset to default NGINX configuration."
+                        onChange={(e) => {
+                            const newApiData = Utils.copyObject(
+                                this.props.apiData!
+                            )
+                            newApiData.appDefinition.customNginxConfig =
+                                e.target.value
+                            this.props.updateApiData(newApiData)
+                        }}
+                        padding={10}
+                        style={{
+                            fontSize: 15,
+                            overflow: 'hidden',
+                            fontFamily:
+                                'ui-monospace,SFMono-Regular,SF Mono,Consolas,Liberation Mono,Menlo,monospace',
+                        }}
+                    />
+                </div>
             </div>
         )
     }
